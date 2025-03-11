@@ -1,0 +1,110 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Testing empty queue
+      id: testing-empty-queue
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Testing empty queue
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#emptyQueueTest test
+        timeout: 10
+    - name: Basic queue tests
+      id: basic-queue-tests
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Basic queue tests
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#basicQueueTests test
+        timeout: 10
+    - name: Add and remove test
+      id: add-and-remove-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Add and remove test
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#addRemoveQueueTest test
+        timeout: 10
+    - name: Overfill the queue
+      id: overfill-the-queue
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Overfill the queue
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#overFillQueueTest test
+        timeout: 10
+    - name: Reset the queue
+      id: reset-the-queue
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Reset the queue
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#resetQueueTest test
+        timeout: 10
+    - name: Remove from queue
+      id: remove-from-queue
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Remove from queue
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#removeTest test
+        timeout: 10
+    - name: Testing if it is printed right
+      id: testing-if-it-is-printed-right
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Testing if it is printed right
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#printTest test
+        timeout: 10
+    - name: Really overgrow the queue
+      id: really-overgrow-the-queue
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Really overgrow the queue
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#reallyGrowTheQueue test
+        timeout: 10
+    - name: Test reallocation with strings
+      id: test-reallocation-with-strings
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test reallocation with strings
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#testStringQueueWithRealloc test
+        timeout: 10
+    - name: Add and remove with strings
+      id: add-and-remove-with-strings
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Add and remove with strings
+        setup-command: mvn compile
+        command: mvn -Dtest=QueueTests#testAddRemoveToString test
+        timeout: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TESTING-EMPTY-QUEUE_RESULTS: "${{steps.testing-empty-queue.outputs.result}}"
+        BASIC-QUEUE-TESTS_RESULTS: "${{steps.basic-queue-tests.outputs.result}}"
+        ADD-AND-REMOVE-TEST_RESULTS: "${{steps.add-and-remove-test.outputs.result}}"
+        OVERFILL-THE-QUEUE_RESULTS: "${{steps.overfill-the-queue.outputs.result}}"
+        RESET-THE-QUEUE_RESULTS: "${{steps.reset-the-queue.outputs.result}}"
+        REMOVE-FROM-QUEUE_RESULTS: "${{steps.remove-from-queue.outputs.result}}"
+        TESTING-IF-IT-IS-PRINTED-RIGHT_RESULTS: "${{steps.testing-if-it-is-printed-right.outputs.result}}"
+        REALLY-OVERGROW-THE-QUEUE_RESULTS: "${{steps.really-overgrow-the-queue.outputs.result}}"
+        TEST-REALLOCATION-WITH-STRINGS_RESULTS: "${{steps.test-reallocation-with-strings.outputs.result}}"
+        ADD-AND-REMOVE-WITH-STRINGS_RESULTS: "${{steps.add-and-remove-with-strings.outputs.result}}"
+      with:
+        runners: testing-empty-queue,basic-queue-tests,add-and-remove-test,overfill-the-queue,reset-the-queue,remove-from-queue,testing-if-it-is-printed-right,really-overgrow-the-queue,test-reallocation-with-strings,add-and-remove-with-strings
